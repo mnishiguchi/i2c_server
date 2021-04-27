@@ -25,5 +25,3 @@ i2c_server-*.tar
 
 # Temporary files for e.g. tests
 /tmp
-
-mix.lock
