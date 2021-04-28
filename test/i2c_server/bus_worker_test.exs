@@ -22,10 +22,10 @@ defmodule I2cServer.BusWorkerTest do
              {:via, Registry, {I2cServer.BusRegistry, {"i2c-1", 119}}}
   end
 
-  test "whereis_name" do
+  test "whereis" do
     {:ok, pid} = BusWorker.start_link(bus_name: "i2c-1", bus_address: 0x77)
 
-    assert BusWorker.whereis_name("i2c-1", 0x77) == pid
+    assert BusWorker.whereis("i2c-1", 0x77) == pid
   end
 
   test "start_link" do

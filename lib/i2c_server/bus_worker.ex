@@ -23,9 +23,12 @@ defmodule I2cServer.BusWorker do
     I2cServer.BusRegistry.via(bus_name, bus_address)
   end
 
-  @spec whereis_name(binary, integer) :: :undefined | pid
-  def whereis_name(bus_name, bus_address) when is_binary(bus_name) and is_integer(bus_address) do
-    I2cServer.BusRegistry.whereis_name(bus_name, bus_address)
+  @spec whereis(binary, integer) :: nil | pid
+  def whereis(bus_name, bus_address) when is_binary(bus_name) and is_integer(bus_address) do
+    case I2cServer.BusRegistry.whereis_name(bus_name, bus_address) do
+      :undefined -> nil
+      pid -> pid
+    end
   end
 
   @spec start_link(init_arg) :: GenServer.on_start()
@@ -36,12 +39,12 @@ defmodule I2cServer.BusWorker do
     GenServer.start_link(__MODULE__, init_arg, name: via(bus_name, bus_address))
   end
 
-  @spec read(GenEvent.server(), integer) :: any
+  @spec read(GenServer.server(), integer) :: any
   def read(server, bytes_to_read) when is_integer(bytes_to_read) do
     GenServer.call(server, {:read, bytes_to_read})
   end
 
-  @spec write(GenEvent.server(), binary | integer) :: any
+  @spec write(GenServer.server(), binary | integer) :: any
   def write(server, data) when is_binary(data) do
     GenServer.call(server, {:write, data})
   end
@@ -50,7 +53,7 @@ defmodule I2cServer.BusWorker do
     GenServer.call(server, {:write, <<register>>})
   end
 
-  @spec write_read(GenEvent.server(), binary | integer, integer) :: any
+  @spec write_read(GenServer.server(), binary | integer, integer) :: any
   def write_read(server, write_data, bytes_to_read)
       when is_binary(write_data) and is_integer(bytes_to_read) do
     GenServer.call(server, {:write_read, write_data, bytes_to_read})

@@ -17,12 +17,19 @@ defmodule I2cServer.BusSupervisorTest do
     :ok
   end
 
-  test "start_child" do
-    assert {:ok, _pid} = BusSupervisor.start_child(bus_name: "i2c-1", bus_address: 0x77)
+  test "server_process" do
+    pid1 = I2cServer.server_process("i2c-1", 0x77)
+    pid2 = I2cServer.server_process("i2c-1", 0x76)
+    pid3 = I2cServer.server_process("i2c-2", 0x38)
+    assert is_pid(pid1)
 
-    assert {:error, {:already_started, _pid}} =
-             BusSupervisor.start_child(bus_name: "i2c-1", bus_address: 0x77)
+    # Always the same pid for the same composite key
+    assert I2cServer.server_process("i2c-1", 0x77) == pid1
+    assert I2cServer.server_process("i2c-1", 0x77) == pid1
 
-    assert {:ok, _pid} = BusSupervisor.start_child(bus_name: "i2c-2", bus_address: 0x38)
+    # Different pid for each composite key
+    refute pid2 == pid1
+    refute pid3 == pid1
+    refute pid3 == pid2
   end
 end
