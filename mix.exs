@@ -8,6 +8,7 @@ defmodule I2cServer.MixProject do
       elixir: "~> 1.11",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
+      aliases: aliases(),
       deps: deps()
     ]
   end
@@ -33,6 +34,20 @@ defmodule I2cServer.MixProject do
       {:ex_doc, "~> 0.24", only: :dev, runtime: false},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
       {:mox, "~> 1.0.0", only: :test}
+    ]
+  end
+
+  # Aliases are shortcuts or tasks specific to the current project.
+  # For example, to install project dependencies and perform other setup tasks, run:
+  #
+  #     $ mix setup
+  #
+  # See the documentation for `Mix` for more info on aliases.
+  defp aliases do
+    [
+      setup: ["deps.get"],
+      format: ["format", "credo"],
+      test: ["test"]
     ]
   end
 end
