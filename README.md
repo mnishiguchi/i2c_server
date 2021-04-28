@@ -1,5 +1,7 @@
 # I2cServer
 
+[![CI](https://github.com/mnishiguchi/i2c_server/actions/workflows/ci.yml/badge.svg)](https://github.com/mnishiguchi/i2c_server/actions/workflows/ci.yml)
+
 **TODO: Add description**
 
 ## Installation
@@ -18,4 +20,3 @@ end
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at [https://hexdocs.pm/i2c_server](https://hexdocs.pm/i2c_server).
-
