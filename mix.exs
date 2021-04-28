@@ -22,6 +22,7 @@ defmodule I2cServer.MixProject do
   end
 
   # Ensure test/support is compiled
+  defp elixirc_paths(:dev), do: ["lib", "test/support"]
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
@@ -33,7 +34,7 @@ defmodule I2cServer.MixProject do
       {:dialyxir, "~> 1.1", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.24", only: :dev, runtime: false},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
-      {:mox, "~> 1.0.0", only: :test}
+      {:mox, "~> 1.0.0", only: [:dev, :test]}
     ]
   end
 
