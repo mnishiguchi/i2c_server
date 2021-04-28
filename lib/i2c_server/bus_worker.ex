@@ -61,6 +61,31 @@ defmodule I2cServer.BusWorker do
     GenServer.call(server, {:write_read, <<register>>, bytes_to_read})
   end
 
+  @spec read(GenEvent.server(), integer) :: any
+  def read(server, bytes_to_read) when is_integer(bytes_to_read) do
+    GenServer.call(server, {:read, bytes_to_read})
+  end
+
+  @spec write(GenEvent.server(), binary | integer) :: any
+  def write(server, data) when is_binary(data) do
+    GenServer.call(server, {:write, data})
+  end
+
+  def write(server, register) when is_integer(register) do
+    GenServer.call(server, {:write, <<register>>})
+  end
+
+  @spec write_read(GenEvent.server(), binary | integer, integer) :: any
+  def write_read(server, write_data, bytes_to_read)
+      when is_binary(write_data) and is_integer(bytes_to_read) do
+    GenServer.call(server, {:write_read, write_data, bytes_to_read})
+  end
+
+  def write_read(server, register, bytes_to_read)
+      when is_integer(register) and is_integer(bytes_to_read) do
+    GenServer.call(server, {:write_read, <<register>>, bytes_to_read})
+  end
+
   @impl GenServer
   def init(args) when is_list(args) do
     state = %{
