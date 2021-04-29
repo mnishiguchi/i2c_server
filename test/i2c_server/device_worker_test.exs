@@ -43,7 +43,10 @@ defmodule I2cServer.DeviceWorkerTest do
     data = 0xFFF
 
     assert :ok = DeviceWorker.write(pid, register, data)
+    assert :ok = DeviceWorker.write(pid, register, <<data>>)
     assert :ok = DeviceWorker.write(pid, <<register, data>>)
+    assert :ok = DeviceWorker.write(pid, [register, data])
+    assert :ok = DeviceWorker.write(pid, [register, <<data>>])
   end
 
   test "write_read" do

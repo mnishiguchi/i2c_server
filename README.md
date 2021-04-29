@@ -33,9 +33,14 @@ iex> device2 = I2cServer.server_process("i2c-1", 0x38)
 
 # Write 0xff to register 0x8A
 iex> I2cServer.write(device1, 0x8A, 0xff)
+iex> I2cServer.write(device1, 0x8A, <<0xff>>)
+iex> I2cServer.write(device1, <<0x8A, 0xff>>)
+iex> I2cServer.write(device1, [0x8A, 0xff])
+iex> I2cServer.write(device1, [0x8A, <<0xff>>])
 :ok
 
 # Read 3 bytes from register 0xE1
 iex> I2cServer.write_read(device1, 0xE1, 3)
+iex> I2cServer.write_read(device1, <<0xE1>>, 3)
 {:ok, <<0, 0, 0>>}
 ```

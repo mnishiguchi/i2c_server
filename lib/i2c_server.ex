@@ -14,12 +14,14 @@ defmodule I2cServer do
     I2cServer.DeviceWorker.read(server, bytes_to_read)
   end
 
-  @spec write(GenServer.server(), binary | integer) :: any
-  def write(server, data) when is_binary(data) do
+  @spec write(GenServer.server(), iodata) :: any
+  def write(server, data) when is_binary(data) or is_list(data) do
     I2cServer.DeviceWorker.write(server, data)
   end
 
-  def write(server, register, data) when is_integer(register) do
+  @spec write(GenServer.server(), integer, binary | integer) :: any
+  def write(server, register, data)
+      when is_integer(register) and (is_binary(data) or is_integer(data)) do
     I2cServer.DeviceWorker.write(server, register, data)
   end
 

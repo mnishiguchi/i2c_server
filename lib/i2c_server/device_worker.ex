@@ -44,12 +44,14 @@ defmodule I2cServer.DeviceWorker do
     GenServer.call(server, {:read, bytes_to_read})
   end
 
-  @spec write(GenServer.server(), binary | integer) :: any
-  def write(server, data) when is_binary(data) do
+  @spec write(GenServer.server(), iodata) :: any
+  def write(server, data) when is_binary(data) or is_list(data) do
     GenServer.call(server, {:write, data})
   end
 
-  def write(server, register, data) when is_integer(register) do
+  @spec write(GenServer.server(), integer, binary | integer) :: any
+  def write(server, register, data)
+      when is_integer(register) and (is_binary(data) or is_integer(data)) do
     GenServer.call(server, {:write, [register, data]})
   end
 
