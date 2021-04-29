@@ -10,7 +10,7 @@ defmodule I2cServer.DeviceRegistryTest do
   end
 
   test "unregister/1" do
-    pid = I2cServer.server_process("i2c-1", 1)
+    _pid = I2cServer.server_process("i2c-1", 1)
 
     assert :ok = DeviceRegistry.unregister({"i2c-1", 1})
   end

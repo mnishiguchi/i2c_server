@@ -5,7 +5,7 @@ defmodule I2cServer.Transport do
   @type bus_address :: 0..127
 
   @callback open(bus_name) :: {:ok, reference} | {:error, any}
-  @callback write(reference, bus_address, binary) :: :ok | {:error, any}
+  @callback write(reference, bus_address, iodata) :: :ok | {:error, any}
   @callback read(reference, bus_address, integer) :: {:ok, binary} | {:error, any}
   @callback write_read(reference, bus_address, binary, integer) :: {:ok, binary} | {:error, any}
 end

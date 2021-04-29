@@ -32,9 +32,10 @@ defmodule I2cServerTest do
   test "write" do
     pid = I2cServer.server_process("i2c-1", 0x77)
     register = 0x8A
+    data = 0xFFF
 
-    assert :ok = I2cServer.write(pid, register)
-    assert :ok = I2cServer.write(pid, <<register>>)
+    assert :ok = I2cServer.write(pid, register, data)
+    assert :ok = I2cServer.write(pid, <<register, data>>)
   end
 
   test "write_read" do

@@ -14,6 +14,7 @@ defmodule I2cServer.DeviceWorkerTest do
 
   setup do
     Mox.stub_with(I2cServer.MockTransport, I2cServer.I2cDeviceStub)
+    DeviceWorker.start_link(bus_name: "i2c-1", bus_address: 0x77)
     :ok
   end
 
@@ -22,37 +23,31 @@ defmodule I2cServer.DeviceWorkerTest do
              {:via, Registry, {I2cServer.DeviceRegistry, {"i2c-1", 119}}}
   end
 
-  test "whereis" do
-    {:ok, pid} = DeviceWorker.start_link(bus_name: "i2c-1", bus_address: 0x77)
+  test "state" do
+    pid = DeviceWorker.whereis("i2c-1", 0x77)
 
-    assert DeviceWorker.whereis("i2c-1", 0x77) == pid
-  end
-
-  test "start_link" do
-    assert {:ok, pid} = DeviceWorker.start_link(bus_name: "i2c-1", bus_address: 0x77)
     assert %{bus_address: 119, bus_name: "i2c-1", i2c_ref: ref} = :sys.get_state(pid)
     assert is_reference(ref)
-
-    assert {:ok, _pid} = DeviceWorker.start_link(bus_name: "i2c-2", bus_address: 0x76)
   end
 
   test "read" do
-    {:ok, pid} = DeviceWorker.start_link(bus_name: "i2c-1", bus_address: 0x77)
+    pid = DeviceWorker.whereis("i2c-1", 0x77)
     bytes_to_read = 23
 
     assert {:ok, _binary} = DeviceWorker.read(pid, bytes_to_read)
   end
 
   test "write" do
-    {:ok, pid} = DeviceWorker.start_link(bus_name: "i2c-1", bus_address: 0x77)
+    pid = DeviceWorker.whereis("i2c-1", 0x77)
     register = 0x8A
+    data = 0xFFF
 
-    assert :ok = DeviceWorker.write(pid, register)
-    assert :ok = DeviceWorker.write(pid, <<register>>)
+    assert :ok = DeviceWorker.write(pid, register, data)
+    assert :ok = DeviceWorker.write(pid, <<register, data>>)
   end
 
   test "write_read" do
-    {:ok, pid} = DeviceWorker.start_link(bus_name: "i2c-1", bus_address: 0x77)
+    pid = DeviceWorker.whereis("i2c-1", 0x77)
     register = 0x8A
     bytes_to_read = 23
 

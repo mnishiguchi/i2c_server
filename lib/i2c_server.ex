@@ -19,8 +19,8 @@ defmodule I2cServer do
     I2cServer.DeviceWorker.write(server, data)
   end
 
-  def write(server, register) when is_integer(register) do
-    I2cServer.DeviceWorker.write(server, <<register>>)
+  def write(server, register, data) when is_integer(register) do
+    I2cServer.DeviceWorker.write(server, register, data)
   end
 
   @spec write_read(GenServer.server(), binary | integer, integer) :: any

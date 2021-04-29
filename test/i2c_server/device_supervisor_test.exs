@@ -18,14 +18,14 @@ defmodule I2cServer.DeviceSupervisorTest do
   end
 
   test "server_process" do
-    pid1 = I2cServer.server_process("i2c-1", 0x77)
-    pid2 = I2cServer.server_process("i2c-1", 0x76)
-    pid3 = I2cServer.server_process("i2c-2", 0x38)
+    pid1 = DeviceSupervisor.server_process("i2c-1", 0x77)
+    pid2 = DeviceSupervisor.server_process("i2c-1", 0x76)
+    pid3 = DeviceSupervisor.server_process("i2c-2", 0x38)
     assert is_pid(pid1)
 
     # Always the same pid for the same composite key
-    assert I2cServer.server_process("i2c-1", 0x77) == pid1
-    assert I2cServer.server_process("i2c-1", 0x77) == pid1
+    assert DeviceSupervisor.server_process("i2c-1", 0x77) == pid1
+    assert DeviceSupervisor.server_process("i2c-1", 0x77) == pid1
 
     # Different pid for each composite key
     refute pid2 == pid1

@@ -1,15 +1,21 @@
 defmodule I2cServer.MixProject do
   use Mix.Project
 
+  @version "0.1.0"
+  @source_url "https://github.com/mnishiguchi/i2c_server"
+
   def project do
     [
       app: :i2c_server,
-      version: "0.1.0",
+      version: @version,
       elixir: "~> 1.11",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      description: "Creates a separate process for communicating with each I2C device",
+      deps: deps(),
+      docs: docs(),
+      package: package()
     ]
   end
 
@@ -36,6 +42,30 @@ defmodule I2cServer.MixProject do
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
       {:mox, "~> 1.0.0", only: [:dev, :test]}
     ]
+  end
+
+  defp docs do
+    [
+      extras: ["README.md"],
+      main: "readme",
+      source_ref: "v#{@version}",
+      source_url: @source_url
+    ]
+  end
+
+  defp package do
+    %{
+      files: [
+        "lib",
+        "mix.exs",
+        "README.md",
+        "LICENSE*"
+      ],
+      licenses: ["MIT"],
+      links: %{
+        "GitHub" => @source_url
+      }
+    }
   end
 
   # Aliases are shortcuts or tasks specific to the current project.
