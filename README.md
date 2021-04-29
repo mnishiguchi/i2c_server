@@ -1,5 +1,7 @@
 # I2C Server
 
+[![Hex.pm](https://img.shields.io/hexpm/v/i2c_server.svg)](https://hex.pm/packages/i2c_server)
+[![API docs](https://img.shields.io/hexpm/v/i2c_server.svg?label=docs)](https://hexdocs.pm/i2c_server)
 [![CI](https://github.com/mnishiguchi/i2c_server/actions/workflows/ci.yml/badge.svg)](https://github.com/mnishiguchi/i2c_server/actions/workflows/ci.yml)
 
 `I2cServer` is a thin wrapper of the `Circuits.I2C` library and creates a separate process for
