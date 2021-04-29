@@ -1,4 +1,4 @@
-defmodule I2cServer.BusRegistry do
+defmodule I2cServer.DeviceRegistry do
   @moduledoc false
 
   @type key :: {binary, integer}
@@ -25,11 +25,11 @@ defmodule I2cServer.BusRegistry do
 
   ## Examples
 
-      iex> BusRegistry.via("i2c-1", 0x77)
-      {:via, Registry, {I2cServer.BusRegistry, {"i2c-1", 119}}}
+      iex> DeviceRegistry.via("i2c-1", 0x77)
+      {:via, Registry, {I2cServer.DeviceRegistry, {"i2c-1", 119}}}
 
   """
-  @spec via(binary, integer) :: {:via, Registry, {I2cServer.BusRegistry, {binary, integer}}}
+  @spec via(binary, integer) :: {:via, Registry, {I2cServer.DeviceRegistry, {binary, integer}}}
   def via(bus_name, bus_address) when is_binary(bus_name) and is_integer(bus_address) do
     {:via, Registry, {__MODULE__, {bus_name, bus_address}}}
   end

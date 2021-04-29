@@ -1,7 +1,7 @@
-defmodule I2cServer.BusSupervisorTest do
+defmodule I2cServer.DeviceSupervisorTest do
   use ExUnit.Case
-  alias I2cServer.BusSupervisor
-  doctest I2cServer.BusSupervisor
+  alias I2cServer.DeviceSupervisor
+  doctest I2cServer.DeviceSupervisor
 
   # https://hexdocs.pm/mox/Mox.html
   import Mox

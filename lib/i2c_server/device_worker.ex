@@ -1,4 +1,4 @@
-defmodule I2cServer.BusWorker do
+defmodule I2cServer.DeviceWorker do
   @moduledoc false
 
   use GenServer
@@ -18,14 +18,14 @@ defmodule I2cServer.BusWorker do
     }
   end
 
-  @spec via(binary, integer) :: {:via, Registry, {I2cServer.BusRegistry, {binary, integer}}}
+  @spec via(binary, integer) :: {:via, Registry, {I2cServer.DeviceRegistry, {binary, integer}}}
   def via(bus_name, bus_address) when is_binary(bus_name) and is_integer(bus_address) do
-    I2cServer.BusRegistry.via(bus_name, bus_address)
+    I2cServer.DeviceRegistry.via(bus_name, bus_address)
   end
 
   @spec whereis(binary, integer) :: nil | pid
   def whereis(bus_name, bus_address) when is_binary(bus_name) and is_integer(bus_address) do
-    case I2cServer.BusRegistry.whereis_name(bus_name, bus_address) do
+    case I2cServer.DeviceRegistry.whereis_name(bus_name, bus_address) do
       :undefined -> nil
       pid -> pid
     end

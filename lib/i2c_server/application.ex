@@ -10,8 +10,8 @@ defmodule I2cServer.Application do
     children = [
       # Starts a worker by calling: I2cServer.Worker.start_link(arg)
       # {I2cServer.Worker, arg}
-      {I2cServer.BusRegistry, nil},
-      {I2cServer.BusSupervisor, nil}
+      {I2cServer.DeviceRegistry, nil},
+      {I2cServer.DeviceSupervisor, nil}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
