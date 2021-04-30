@@ -8,11 +8,11 @@ defmodule I2cServer.DeviceSupervisor do
     DynamicSupervisor.start_link(__MODULE__, init_arg, name: __MODULE__)
   end
 
-  @spec start_child(I2cServer.DeviceWorker.init_option()) :: DynamicSupervisor.on_start_child()
-  def start_child(bus_worker_init_option) do
+  @spec start_child(I2cServer.DeviceWorker.init_arg()) :: DynamicSupervisor.on_start_child()
+  def start_child(init_arg) do
     DynamicSupervisor.start_child(
       __MODULE__,
-      {I2cServer.DeviceWorker, bus_worker_init_option}
+      {I2cServer.DeviceWorker, init_arg}
     )
   end
 
