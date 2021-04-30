@@ -4,10 +4,19 @@ defmodule I2cServer do
   is identified with a composite key of bus name and address.
   """
 
+  @type registry :: I2cServer.DeviceRegistry | :global | atom
+
+  @doc """
+  Returns the module atom of currently-used registry.
+  """
+  @spec registry() :: registry
   def registry() do
     Application.get_env(:i2c_server, :registry_module, I2cServer.DeviceRegistry)
   end
 
+  @doc """
+  Returns the PID for a specified bus name and bus address.
+  """
   @spec server_process(binary, 0..127) :: pid
   def server_process(bus_name, bus_address) do
     I2cServer.DeviceSupervisor.server_process(bus_name, bus_address)
