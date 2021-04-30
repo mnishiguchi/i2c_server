@@ -33,15 +33,15 @@ defmodule I2cServer.I2cDevice do
   @doc """
   Initiate a read transaction to the I2C device at the specified `bus_address`.
   """
-  def read(reference, bus_address, bytes_to_read) do
-    apply(transport_module(), :read, [reference, bus_address, bytes_to_read])
+  def read(reference, bus_address, read_count) do
+    apply(transport_module(), :read, [reference, bus_address, read_count])
   end
 
   @doc """
   Write `data` to an I2C device and then immediately issue a read.
   """
-  def write_read(reference, bus_address, data, bytes_to_read) do
-    apply(transport_module(), :write_read, [reference, bus_address, data, bytes_to_read])
+  def write_read(reference, bus_address, data, read_count) do
+    apply(transport_module(), :write_read, [reference, bus_address, data, read_count])
   end
 
   defp transport_module() do
@@ -57,6 +57,6 @@ defmodule I2cServer.I2cDeviceStub do
 
   def open(_bus_name), do: {:ok, Kernel.make_ref()}
   def write(_reference, _bus_address, _data), do: :ok
-  def read(_reference, _bus_address, _bytes_to_read), do: {:ok, "stub"}
-  def write_read(_reference, _bus_address, _data, _bytes_to_read), do: {:ok, "stub"}
+  def read(_reference, _bus_address, _read_count), do: {:ok, "stub"}
+  def write_read(_reference, _bus_address, _data, _read_count), do: {:ok, "stub"}
 end

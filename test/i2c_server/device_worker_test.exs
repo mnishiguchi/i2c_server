@@ -27,9 +27,9 @@ defmodule I2cServer.DeviceWorkerTest do
 
   test "read" do
     pid = DeviceWorker.whereis("i2c-1", 0x77)
-    bytes_to_read = 23
+    read_count = 23
 
-    assert {:ok, _binary} = DeviceWorker.read(pid, bytes_to_read)
+    assert {:ok, _binary} = DeviceWorker.read(pid, read_count)
   end
 
   test "write" do
@@ -47,9 +47,9 @@ defmodule I2cServer.DeviceWorkerTest do
   test "write_read" do
     pid = DeviceWorker.whereis("i2c-1", 0x77)
     register = 0x8A
-    bytes_to_read = 23
+    read_count = 23
 
-    assert {:ok, _binary} = DeviceWorker.write_read(pid, register, bytes_to_read)
-    assert {:ok, _binary} = DeviceWorker.write_read(pid, <<register>>, bytes_to_read)
+    assert {:ok, _binary} = DeviceWorker.write_read(pid, register, read_count)
+    assert {:ok, _binary} = DeviceWorker.write_read(pid, <<register>>, read_count)
   end
 end

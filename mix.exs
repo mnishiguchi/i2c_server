@@ -12,7 +12,7 @@ defmodule I2cServer.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      description: "Creates a separate process for communicating with each I2C device",
+      description: "Wrap an I2C device in a separate process",
       deps: deps(),
       docs: docs(),
       package: package()

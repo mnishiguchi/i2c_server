@@ -50,13 +50,13 @@ defmodule I2cServer.DeviceWorker do
   end
 
   @spec read(GenServer.server(), integer) :: any
-  def read(server, bytes_to_read) when is_integer(bytes_to_read) do
-    GenServer.call(server, {:read, bytes_to_read})
+  def read(server, read_count) when is_integer(read_count) do
+    GenServer.call(server, {:read, read_count})
   end
 
   @spec write(GenServer.server(), iodata) :: any
-  def write(server, data) when is_binary(data) or is_list(data) do
-    GenServer.call(server, {:write, data})
+  def write(server, register_data) when is_binary(register_data) or is_list(register_data) do
+    GenServer.call(server, {:write, register_data})
   end
 
   @spec write(GenServer.server(), integer, binary | integer) :: any
@@ -66,14 +66,14 @@ defmodule I2cServer.DeviceWorker do
   end
 
   @spec write_read(GenServer.server(), binary | integer, integer) :: any
-  def write_read(server, write_data, bytes_to_read)
-      when is_binary(write_data) and is_integer(bytes_to_read) do
-    GenServer.call(server, {:write_read, write_data, bytes_to_read})
+  def write_read(server, write_data, read_count)
+      when is_binary(write_data) and is_integer(read_count) do
+    GenServer.call(server, {:write_read, write_data, read_count})
   end
 
-  def write_read(server, register, bytes_to_read)
-      when is_integer(register) and is_integer(bytes_to_read) do
-    GenServer.call(server, {:write_read, <<register>>, bytes_to_read})
+  def write_read(server, register, read_count)
+      when is_integer(register) and is_integer(read_count) do
+    GenServer.call(server, {:write_read, <<register>>, read_count})
   end
 
   @impl GenServer
@@ -95,8 +95,8 @@ defmodule I2cServer.DeviceWorker do
   end
 
   @impl GenServer
-  def handle_call({:read, bytes_to_read}, _from, state) do
-    result = I2cServer.I2cDevice.read(state.i2c_ref, state.bus_address, bytes_to_read)
+  def handle_call({:read, read_count}, _from, state) do
+    result = I2cServer.I2cDevice.read(state.i2c_ref, state.bus_address, read_count)
 
     {:reply, result, state}
   end
@@ -109,9 +109,9 @@ defmodule I2cServer.DeviceWorker do
   end
 
   @impl GenServer
-  def handle_call({:write_read, register, bytes_to_read}, _from, state) do
+  def handle_call({:write_read, register, read_count}, _from, state) do
     result =
-      I2cServer.I2cDevice.write_read(state.i2c_ref, state.bus_address, register, bytes_to_read)
+      I2cServer.I2cDevice.write_read(state.i2c_ref, state.bus_address, register, read_count)
 
     {:reply, result, state}
   end
