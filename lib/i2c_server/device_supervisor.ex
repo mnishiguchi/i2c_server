@@ -26,7 +26,7 @@ defmodule I2cServer.DeviceSupervisor do
   end
 
   defp new_process(bus_name, bus_address) do
-    case I2cServer.DeviceSupervisor.start_child(bus_name: bus_name, bus_address: bus_address) do
+    case start_child(bus_name: bus_name, bus_address: bus_address) do
       {:ok, pid} -> pid
       {:error, {:already_started, pid}} -> pid
     end

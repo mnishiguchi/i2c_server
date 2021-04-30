@@ -6,7 +6,8 @@
 
 `I2cServer` is a thin wrapper of the `Circuits.I2C` library and creates a separate process for
 communicating with each [I2C](https://en.wikipedia.org/wiki/I%C2%B2C) device. A I2C device process
-is stored in `Registry` and identified with a composite key of bus name and bus address.
+is stored in [`Registry`](https://hexdocs.pm/elixir/Registry.html) and identified with a composite
+key of bus name and bus address.
 
 ## Installation
 
@@ -20,7 +21,7 @@ def deps do
 end
 ```
 
-## Examples
+## Usage
 
 ```elixir
 # Get a PID for a device at address 0x77 on "i2c-1" bus
@@ -43,4 +44,13 @@ iex> I2cServer.write(device1, [0x8A, <<0xff>>])
 iex> I2cServer.write_read(device1, 0xE1, 3)
 iex> I2cServer.write_read(device1, <<0xE1>>, 3)
 {:ok, <<0, 0, 0>>}
+```
+
+## Global registration
+
+You can replace default registry with [`:global`](http://erlang.org/doc/man/global.html) in your
+config file such as `config/config.exs` file.
+
+```elixir
+config :i2c_server, registry_module: :global
 ```

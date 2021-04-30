@@ -34,18 +34,14 @@ defmodule I2cServer.DeviceRegistry do
     {:via, Registry, {__MODULE__, {bus_name, bus_address}}}
   end
 
-  @spec whereis_name(binary, integer) :: :undefined | pid
-  def whereis_name(bus_name, bus_address) when is_binary(bus_name) and is_integer(bus_address) do
+  @spec whereis_name({binary, integer}) :: :undefined | pid
+  def whereis_name({bus_name, bus_address})
+      when is_binary(bus_name) and is_integer(bus_address) do
     Registry.whereis_name({__MODULE__, {bus_name, bus_address}})
   end
 
   @spec keys(pid) :: [key]
   def keys(pid) do
     Registry.keys(__MODULE__, pid)
-  end
-
-  @spec unregister(key) :: :ok
-  def unregister(key) do
-    Registry.unregister(__MODULE__, key)
   end
 end

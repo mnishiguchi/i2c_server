@@ -18,11 +18,6 @@ defmodule I2cServer.DeviceWorkerTest do
     :ok
   end
 
-  test "via" do
-    assert DeviceWorker.via("i2c-1", 0x77) ==
-             {:via, Registry, {I2cServer.DeviceRegistry, {"i2c-1", 119}}}
-  end
-
   test "state" do
     pid = DeviceWorker.whereis("i2c-1", 0x77)
 

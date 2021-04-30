@@ -46,7 +46,7 @@ defmodule I2cServer.I2cDevice do
 
   defp transport_module() do
     # https://hexdocs.pm/elixir/master/library-guidelines.html#avoid-compile-time-application-configuration
-    Application.get_env(:i2c_server, :transport_module)
+    Application.get_env(:i2c_server, :transport_module, Circuits.I2C)
   end
 end
 

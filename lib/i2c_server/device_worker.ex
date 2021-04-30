@@ -8,6 +8,10 @@ defmodule I2cServer.DeviceWorker do
           bus_address: 0..127
         ]
 
+  @type server_name ::
+          {:global, {binary, integer}}
+          | {:via, Registry, {I2cServer.DeviceRegistry, {binary, integer}}}
+
   def child_spec(init_arg) do
     bus_name = Keyword.fetch!(init_arg, :bus_name)
     bus_address = Keyword.fetch!(init_arg, :bus_address)
@@ -18,16 +22,22 @@ defmodule I2cServer.DeviceWorker do
     }
   end
 
-  @spec via(binary, integer) :: {:via, Registry, {I2cServer.DeviceRegistry, {binary, integer}}}
-  def via(bus_name, bus_address) when is_binary(bus_name) and is_integer(bus_address) do
-    I2cServer.DeviceRegistry.via(bus_name, bus_address)
-  end
-
   @spec whereis(binary, integer) :: nil | pid
   def whereis(bus_name, bus_address) when is_binary(bus_name) and is_integer(bus_address) do
-    case I2cServer.DeviceRegistry.whereis_name(bus_name, bus_address) do
+    registry()
+    |> apply(:whereis_name, [{bus_name, bus_address}])
+    |> case do
       :undefined -> nil
       pid -> pid
+    end
+  end
+
+  @spec server_name(binary, integer) :: server_name
+  def server_name(bus_name, bus_address) do
+    registry()
+    |> case do
+      :global -> {:global, {bus_name, bus_address}}
+      _ -> I2cServer.DeviceRegistry.via(bus_name, bus_address)
     end
   end
 
@@ -36,7 +46,7 @@ defmodule I2cServer.DeviceWorker do
     bus_name = Keyword.fetch!(init_arg, :bus_name)
     bus_address = Keyword.fetch!(init_arg, :bus_address)
 
-    GenServer.start_link(__MODULE__, init_arg, name: via(bus_name, bus_address))
+    GenServer.start_link(__MODULE__, init_arg, name: server_name(bus_name, bus_address))
   end
 
   @spec read(GenServer.server(), integer) :: any
@@ -104,5 +114,9 @@ defmodule I2cServer.DeviceWorker do
       I2cServer.I2cDevice.write_read(state.i2c_ref, state.bus_address, register, bytes_to_read)
 
     {:reply, result, state}
+  end
+
+  defp registry() do
+    Application.get_env(:i2c_server, :registry_module, I2cServer.DeviceRegistry)
   end
 end

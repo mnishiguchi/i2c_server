@@ -4,6 +4,10 @@ defmodule I2cServer do
   is identified with a composite key of bus name and address.
   """
 
+  def registry() do
+    Application.get_env(:i2c_server, :registry_module, I2cServer.DeviceRegistry)
+  end
+
   @spec server_process(binary, 0..127) :: pid
   def server_process(bus_name, bus_address) do
     I2cServer.DeviceSupervisor.server_process(bus_name, bus_address)
