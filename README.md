@@ -68,15 +68,16 @@ The default `:registry_module` is `I2cServer.DeviceRegistry` that is a thin wrap
 You can alternatively use [`:global`](http://erlang.org/doc/man/global.html) for global registration.
 
 ```elixir
-config :i2c_server, registry_module: :global
+config :i2c_server,
+  registry_module: :global
 ```
 
-### I2C module
+### Transport module
 
 The default `:transport_module` is `Circuits.I2C`. You will most likely use the default, but you
-may want to use a mock for testing. Any module that implements the `I2cServer.Transport` behaviour
-should work.
+may want to replace it with a mock for testing.
 
 ```elixir
-config :i2c_server, transport_module: Circuits.I2C
+config :i2c_server,
+  transport_module: I2cServer.MockTransport
 ```
