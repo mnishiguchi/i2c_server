@@ -1,4 +1,4 @@
-defmodule I2cServer.DeviceSupervisor do
+defmodule I2cServer.BusSupervisor do
   @moduledoc false
 
   use DynamicSupervisor
@@ -8,25 +8,25 @@ defmodule I2cServer.DeviceSupervisor do
     DynamicSupervisor.start_link(__MODULE__, init_arg, name: __MODULE__)
   end
 
-  @spec start_child(I2cServer.DeviceWorker.init_arg()) :: DynamicSupervisor.on_start_child()
+  @spec start_child(I2cServer.BusWorker.init_arg()) :: DynamicSupervisor.on_start_child()
   def start_child(init_arg) do
     DynamicSupervisor.start_child(
       __MODULE__,
-      {I2cServer.DeviceWorker, init_arg}
+      {I2cServer.BusWorker, init_arg}
     )
   end
 
-  @spec server_process(binary, 0..127) :: pid
-  def server_process(bus_name, bus_address) do
-    existing_process(bus_name, bus_address) || new_process(bus_name, bus_address)
+  @spec server_process(binary) :: pid
+  def server_process(bus_name) do
+    existing_process(bus_name) || new_process(bus_name)
   end
 
-  defp existing_process(bus_name, bus_address) do
-    I2cServer.DeviceWorker.whereis(bus_name, bus_address)
+  defp existing_process(bus_name) do
+    I2cServer.BusWorker.whereis(bus_name)
   end
 
-  defp new_process(bus_name, bus_address) do
-    case start_child(bus_name: bus_name, bus_address: bus_address) do
+  defp new_process(bus_name) do
+    case start_child(bus_name: bus_name) do
       {:ok, pid} -> pid
       {:error, {:already_started, pid}} -> pid
     end

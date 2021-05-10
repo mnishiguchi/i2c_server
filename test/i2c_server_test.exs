@@ -12,41 +12,40 @@ defmodule I2cServerTest do
   setup :verify_on_exit!
 
   setup do
-    Mox.stub_with(I2cServer.MockTransport, I2cServer.I2cDeviceStub)
+    Mox.stub_with(I2cServer.MockTransport, I2cServer.I2cBusStub)
     :ok
   end
 
-  test "server_process" do
-    pid = I2cServer.server_process("i2c-1", 0x77)
-
-    assert is_pid(pid)
+  test "start_link" do
+    {:ok, server} = I2cServer.start_link(bus_name: "i2c-1", bus_address: 0x77)
+    assert %{bus_address: 119, bus_name: "i2c-1"} = :sys.get_state(server)
   end
 
   test "read" do
-    pid = I2cServer.server_process("i2c-1", 0x77)
+    {:ok, server} = I2cServer.start_link(bus_name: "i2c-1", bus_address: 0x77)
     read_count = 23
 
-    assert {:ok, _binary} = I2cServer.read(pid, read_count)
+    assert {:ok, _binary} = I2cServer.read(server, read_count)
   end
 
   test "write" do
-    pid = I2cServer.server_process("i2c-1", 0x77)
+    {:ok, server} = I2cServer.start_link(bus_name: "i2c-1", bus_address: 0x77)
     register = 0x8A
     data = 0xFFF
 
-    assert :ok = I2cServer.write(pid, register, data)
-    assert :ok = I2cServer.write(pid, register, <<data>>)
-    assert :ok = I2cServer.write(pid, <<register, data>>)
-    assert :ok = I2cServer.write(pid, [register, data])
-    assert :ok = I2cServer.write(pid, [register, <<data>>])
+    assert :ok = I2cServer.write(server, register, data)
+    assert :ok = I2cServer.write(server, register, <<data>>)
+    assert :ok = I2cServer.write(server, <<register, data>>)
+    assert :ok = I2cServer.write(server, [register, data])
+    assert :ok = I2cServer.write(server, [register, <<data>>])
   end
 
   test "write_read" do
-    pid = I2cServer.server_process("i2c-1", 0x77)
+    {:ok, server} = I2cServer.start_link(bus_name: "i2c-1", bus_address: 0x77)
     register = 0x8A
     read_count = 23
 
-    assert {:ok, _binary} = I2cServer.write_read(pid, register, read_count)
-    assert {:ok, _binary} = I2cServer.write_read(pid, <<register>>, read_count)
+    assert {:ok, _binary} = I2cServer.write_read(server, register, read_count)
+    assert {:ok, _binary} = I2cServer.write_read(server, <<register>>, read_count)
   end
 end

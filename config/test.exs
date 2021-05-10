@@ -4,4 +4,4 @@ import Config
 # https://hexdocs.pm/mox/Mox.html
 config :i2c_server,
   transport_module: I2cServer.MockTransport,
-  registry_module: I2cServer.DeviceRegistry
+  bus_registry_module: I2cServer.BusRegistry

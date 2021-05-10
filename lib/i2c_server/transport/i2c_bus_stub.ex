@@ -1,4 +1,4 @@
-defmodule I2cServer.I2cDeviceStub do
+defmodule I2cServer.I2cBusStub do
   @moduledoc false
 
   @behaviour I2cServer.Transport
