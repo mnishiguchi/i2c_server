@@ -17,7 +17,7 @@ Just add `i2c_server` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:i2c_server, "~> 0.1"}
+    {:i2c_server, "~> 0.2"}
   ]
 end
 ```

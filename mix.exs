@@ -1,7 +1,7 @@
 defmodule I2cServer.MixProject do
   use Mix.Project
 
-  @version "0.1.4"
+  @version "0.2.0"
   @source_url "https://github.com/mnishiguchi/i2c_server"
 
   def project do
@@ -12,7 +12,7 @@ defmodule I2cServer.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      description: "Wrap an I2C device in a separate process",
+      description: "Wrap an I2C device in a separate process per I2C bus",
       deps: deps(),
       docs: docs(),
       package: package()
