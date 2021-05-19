@@ -9,7 +9,7 @@ defmodule I2cServer.MixProject do
       app: :i2c_server,
       version: @version,
       elixir: "~> 1.11",
-      elixirc_paths: elixirc_paths(Mix.env()),
+      elixirc_paths: code(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       description: "Wrap an I2C device in a separate process per I2C bus",
@@ -28,9 +28,9 @@ defmodule I2cServer.MixProject do
   end
 
   # Ensure test/support is compiled
-  defp elixirc_paths(:dev), do: ["lib", "test/support"]
-  defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(_), do: ["lib"]
+  defp code(:dev), do: ["lib", "test/support"]
+  defp code(:test), do: ["lib", "test/support"]
+  defp code(_), do: ["lib"]
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
