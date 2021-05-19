@@ -84,33 +84,26 @@ defmodule I2cServer.BusWorker do
     bus_name = Keyword.fetch!(args, :bus_name)
 
     case I2cServer.I2cBus.open(bus_name) do
-      {:ok, i2c_ref} ->
-        state = %{i2c_ref: i2c_ref, bus_name: bus_name}
-        {:ok, state}
-
-      {:error, reason} ->
-        {:stop, reason}
+      {:ok, i2c_ref} -> {:ok, %{i2c_ref: i2c_ref, bus_name: bus_name}}
+      _error -> {:stop, :bus_not_found}
     end
   end
 
   @impl GenServer
   def handle_call({:read, bus_address, read_count}, _from, state) do
     result = I2cServer.I2cBus.read(state.i2c_ref, bus_address, read_count)
-
     {:reply, result, state}
   end
 
   @impl GenServer
   def handle_call({:write, bus_address, data}, _from, state) do
     result = I2cServer.I2cBus.write(state.i2c_ref, bus_address, data)
-
     {:reply, result, state}
   end
 
   @impl GenServer
   def handle_call({:write_read, bus_address, register, read_count}, _from, state) do
     result = I2cServer.I2cBus.write_read(state.i2c_ref, bus_address, register, read_count)
-
     {:reply, result, state}
   end
 
