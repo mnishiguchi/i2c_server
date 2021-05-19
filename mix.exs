@@ -1,7 +1,7 @@
 defmodule I2cServer.MixProject do
   use Mix.Project
 
-  @version "0.2.0"
+  @version "0.2.1"
   @source_url "https://github.com/mnishiguchi/i2c_server"
 
   def project do
