@@ -27,6 +27,14 @@ defmodule I2cServer do
     Application.get_env(:i2c_server, :bus_registry_module, I2cServer.BusRegistry)
   end
 
+  @doc """
+  Replaces the currently-used bus registry with a different one.
+  """
+  @spec set_bus_registry(bus_registry) :: :ok
+  def set_bus_registry(bus_registry) do
+    Application.put_env(:i2c_server, :bus_registry_module, bus_registry)
+  end
+
   @spec start_link(init_arg) :: GenServer.on_start()
   def start_link(init_arg) do
     GenServer.start_link(__MODULE__, init_arg)
