@@ -48,4 +48,15 @@ defmodule I2cServerTest do
     assert {:ok, _binary} = I2cServer.write_read(server, register, read_count)
     assert {:ok, _binary} = I2cServer.write_read(server, <<register>>, read_count)
   end
+
+  test "bulk" do
+    {:ok, server} = I2cServer.start_link(bus_name: "i2c-1", bus_address: 0x77)
+
+    I2cServer.bulk(server, [
+      {:read, 1},
+      {:write, 0x8A, <<0xFF>>},
+      fn _pid, _bus_address -> "Do something" end,
+      {:write_read, 0x8A, 1}
+    ])
+  end
 end

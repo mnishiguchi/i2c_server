@@ -77,6 +77,20 @@ defmodule I2cServer do
     GenServer.call(server, {:write_read, <<register>>, read_count})
   end
 
+  @doc """
+  Run multiple operations in series blocking the process in favor of consistency.
+  """
+  @spec bulk(GenServer.server(), [
+          {:read, integer}
+          | {:write, integer, iodata}
+          | {:write, integer, integer, binary | integer}
+          | {:write_read, binary | integer, integer}
+          | function()
+        ]) :: list
+  def bulk(server, bulk_operations) when is_list(bulk_operations) do
+    GenServer.call(server, {:bulk, bulk_operations})
+  end
+
   @impl GenServer
   def init(args) when is_list(args) do
     state = %{
@@ -123,6 +137,44 @@ defmodule I2cServer do
     result = I2cServer.BusWorker.write_read(pid, bus_address, register, read_count)
 
     {:reply, result, state}
+  end
+
+  def handle_call({:bulk, bulk_operations}, _from, state) do
+    %{bus_name: bus_name, bus_address: bus_address} = state
+    pid = bus_server_process(bus_name)
+
+    result =
+      bulk_operations
+      |> bulk_operations_to_funs
+      |> Stream.map(fn f -> f.(pid, bus_address) end)
+      |> Enum.to_list()
+
+    {:reply, result, state}
+  end
+
+  defp bulk_operations_to_funs(bulk_operations) do
+    Stream.map(bulk_operations, fn
+      anon_fun when is_function(anon_fun) ->
+        fn server, bus_address when is_pid(server) and is_integer(bus_address) ->
+          anon_fun.(server, bus_address)
+        end
+
+      fun_name_and_args when is_tuple(fun_name_and_args) ->
+        [fun_name | args] = Tuple.to_list(fun_name_and_args)
+
+        fn server, bus_address when is_pid(server) and is_integer(bus_address) ->
+          apply(
+            I2cServer.BusWorker,
+            fun_name,
+            [server, bus_address] ++ args
+          )
+        end
+
+      _ ->
+        raise ArgumentError, """
+        A list entry must be tuple or function.
+        """
+    end)
   end
 
   defp bus_server_process(bus_name) do
