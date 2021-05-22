@@ -38,6 +38,14 @@ iex> I2cServer.read(device, 3)
 # Read 3 bytes from the register 0xE1
 iex> I2cServer.write_read(device, 0xE1, 3)
 {:ok, <<0, 0, 0>>}
+
+# Do multiple operations in series blocking the server process
+iex> I2cServer.bulk(device, [
+...>   {:write, [0xBA]},
+...>   fn(_device, _address) -> Process.sleep(10) end,
+...>   {:write, [0xAC, <<0x33, 0x00>>]}
+...> ])
+[:ok, :ok, :ok]
 ```
 
 I2C bus processes will be created under `I2cServer.I2cBusSupervisor` dynamically.
