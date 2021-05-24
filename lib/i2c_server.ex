@@ -81,7 +81,9 @@ defmodule I2cServer do
   Run multiple operations in series blocking the process in favor of consistency.
   """
   @spec bulk(GenServer.server(), [
-          {:read, integer}
+          {:sleep, integer}
+          | {atom, atom, list}
+          | {:read, integer}
           | {:write, integer, iodata}
           | {:write, integer, integer, binary | integer}
           | {:write_read, binary | integer, integer}
@@ -157,6 +159,16 @@ defmodule I2cServer do
       anon_fun when is_function(anon_fun) ->
         fn server, bus_address when is_pid(server) and is_integer(bus_address) ->
           anon_fun.(server, bus_address)
+        end
+
+      {:sleep, ms} when is_integer(ms) ->
+        fn server, bus_address when is_pid(server) and is_integer(bus_address) ->
+          Process.sleep(ms)
+        end
+
+      {mod, fun, args} when is_atom(mod) and is_atom(fun) and is_list(args) ->
+        fn server, bus_address when is_pid(server) and is_integer(bus_address) ->
+          apply(mod, fun, args)
         end
 
       fun_name_and_args when is_tuple(fun_name_and_args) ->

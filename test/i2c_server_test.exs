@@ -55,7 +55,9 @@ defmodule I2cServerTest do
     I2cServer.bulk(server, [
       {:read, 1},
       {:write, 0x8A, <<0xFF>>},
-      fn _pid, _bus_address -> "Do something" end,
+      {:sleep, 10},
+      fn _pid, _bus_address -> "something" end,
+      {Process, :sleep, [10]},
       {:write_read, 0x8A, 1}
     ])
   end
