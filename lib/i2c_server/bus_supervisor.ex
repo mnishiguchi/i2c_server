@@ -29,6 +29,7 @@ defmodule I2cServer.BusSupervisor do
     case start_child(bus_name: bus_name) do
       {:ok, pid} -> pid
       {:error, {:already_started, pid}} -> pid
+      error -> error
     end
   end
 
