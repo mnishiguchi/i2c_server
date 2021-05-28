@@ -6,7 +6,7 @@ defmodule I2cServer do
   [I2C](https://en.wikipedia.org/wiki/I%C2%B2C) bus.
   """
 
-  use GenServer
+  use GenServer, restart: :transient
 
   @type bus_registry :: I2cServer.Busbus_registry | :global | atom
 
