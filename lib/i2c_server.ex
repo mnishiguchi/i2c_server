@@ -145,48 +145,9 @@ defmodule I2cServer do
     %{bus_name: bus_name, bus_address: bus_address} = state
     pid = bus_server_process(bus_name)
 
-    result =
-      bulk_operations
-      |> bulk_operations_to_funs
-      |> Stream.map(fn f -> f.(pid, bus_address) end)
-      |> Enum.to_list()
+    result = I2cServer.BusWorker.bulk(pid, bus_address, bulk_operations)
 
     {:reply, result, state}
-  end
-
-  defp bulk_operations_to_funs(bulk_operations) do
-    Stream.map(bulk_operations, fn
-      anon_fun when is_function(anon_fun) ->
-        fn server, bus_address when is_pid(server) and is_integer(bus_address) ->
-          anon_fun.(server, bus_address)
-        end
-
-      {:sleep, ms} when is_integer(ms) ->
-        fn server, bus_address when is_pid(server) and is_integer(bus_address) ->
-          Process.sleep(ms)
-        end
-
-      {mod, fun, args} when is_atom(mod) and is_atom(fun) and is_list(args) ->
-        fn server, bus_address when is_pid(server) and is_integer(bus_address) ->
-          apply(mod, fun, args)
-        end
-
-      fun_name_and_args when is_tuple(fun_name_and_args) ->
-        [fun_name | args] = Tuple.to_list(fun_name_and_args)
-
-        fn server, bus_address when is_pid(server) and is_integer(bus_address) ->
-          apply(
-            I2cServer.BusWorker,
-            fun_name,
-            [server, bus_address] ++ args
-          )
-        end
-
-      _ ->
-        raise ArgumentError, """
-        A list entry must be tuple or function.
-        """
-    end)
   end
 
   defp bus_server_process(bus_name) do

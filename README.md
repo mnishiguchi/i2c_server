@@ -39,15 +39,15 @@ iex> I2cServer.read(device, 3)
 iex> I2cServer.write_read(device, 0xE1, 3)
 {:ok, <<0, 0, 0>>}
 
-# Do multiple operations in series blocking the server process
+# Do multiple operations sequentially blocking the bus worker process
 iex> I2cServer.bulk(device, [
 ...>   {:write, [0xBA]},
 ...>   {:sleep, 10},
 ...>   {:write, [0xAC, <<0x33, 0x00>>]},
 ...>   {Process, :sleep, [10]},
-...>   fn(_device, _address) -> "something" end
+...>   fn(_) -> "something" end
 ...> ])
-[:ok, :ok, :ok, :ok, :ok]
+[:ok, :ok, :ok, :ok, "something"]
 ```
 
 I2C bus processes will be created under `I2cServer.I2cBusSupervisor` dynamically.

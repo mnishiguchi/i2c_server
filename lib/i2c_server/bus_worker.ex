@@ -1,7 +1,7 @@
 defmodule I2cServer.BusWorker do
   @moduledoc false
 
-  use GenServer
+  use GenServer, restart: :permanent
 
   @type bus_name :: binary
 
@@ -26,9 +26,7 @@ defmodule I2cServer.BusWorker do
 
   @spec whereis(binary) :: nil | pid
   def whereis(bus_name) when is_binary(bus_name) do
-    registry()
-    |> apply(:whereis_name, [bus_name])
-    |> case do
+    case apply(bus_registry_module(), :whereis_name, [bus_name]) do
       :undefined -> nil
       pid -> pid
     end
@@ -36,10 +34,9 @@ defmodule I2cServer.BusWorker do
 
   @spec server_name(bus_name) :: server_name
   def server_name(bus_name) do
-    registry()
-    |> case do
+    case bus_registry_module() do
       :global -> {:global, bus_name}
-      _ -> I2cServer.BusRegistry.via(bus_name)
+      _default -> I2cServer.BusRegistry.via(bus_name)
     end
   end
 
@@ -79,6 +76,19 @@ defmodule I2cServer.BusWorker do
     GenServer.call(server, {:write_read, bus_address, <<register>>, read_count})
   end
 
+  @spec bulk(GenServer.server(), bus_address, [
+          {:sleep, integer}
+          | {atom, atom, list}
+          | {:read, integer}
+          | {:write, integer, iodata}
+          | {:write, integer, integer, binary | integer}
+          | {:write_read, binary | integer, integer}
+          | function()
+        ]) :: list
+  def bulk(server, bus_address, bulk_operations) when is_list(bulk_operations) do
+    GenServer.call(server, {:bulk, bus_address, bulk_operations})
+  end
+
   @impl GenServer
   def init(args) when is_list(args) do
     bus_name = Keyword.fetch!(args, :bus_name)
@@ -107,7 +117,56 @@ defmodule I2cServer.BusWorker do
     {:reply, result, state}
   end
 
-  defp registry() do
+  def handle_call({:bulk, bus_address, bulk_operations}, _from, state) do
+    params = Map.merge(state, %{bus_address: bus_address})
+
+    result =
+      bulk_operations
+      |> bulk_operations_to_funs
+      |> Stream.map(fn f -> f.(params) end)
+      |> Enum.to_list()
+
+    {:reply, result, state}
+  end
+
+  defp bulk_operations_to_funs(bulk_operations) do
+    Stream.map(bulk_operations, fn
+      # fn _ -> "something" end
+      anon_fun when is_function(anon_fun) ->
+        fn params -> anon_fun.(params) end
+
+      # {:sleep, 10}
+      {:sleep, ms} when is_integer(ms) ->
+        fn _params -> Process.sleep(ms) end
+
+      # {Process, :sleep, [10]}
+      {mod, fun, args} when is_atom(mod) and is_atom(fun) and is_list(args) ->
+        fn _params -> apply(mod, fun, args) end
+
+      # {:write, 0x8A, <<0xFF>>}
+      fun_name_and_args when is_tuple(fun_name_and_args) ->
+        [fun_name | args] = Tuple.to_list(fun_name_and_args)
+
+        fn %{i2c_ref: i2c_ref, bus_address: bus_address} ->
+          apply(I2cServer.I2cBus, fun_name, [i2c_ref, bus_address] ++ args)
+        end
+
+      _ ->
+        raise ArgumentError, """
+        A list entry must be tuple or anonymous function. Examples:
+
+            fn _ -> "something" end
+            {:sleep, 10}
+            {Process, :sleep, [10]}
+            {:read, 1}
+            {:write, [0x8A, <<0xFF>>]}
+            {:write_read, 0x8A, 1}
+
+        """
+    end)
+  end
+
+  defp bus_registry_module() do
     Application.get_env(:i2c_server, :bus_registry_module, I2cServer.BusRegistry)
   end
 end
