@@ -1,7 +1,5 @@
 defmodule I2cServer.Transport do
-  @moduledoc """
-  I2cServer.Transport lets you communicate with hardware devices using the I2C protocol.
-  """
+  @moduledoc false
 
   @type bus_name :: binary
 

@@ -66,7 +66,7 @@ defmodule I2cServer do
   @doc """
   Writes data to an I2C device and then immediately issue a read.
   """
-  @spec write_read(GenServer.server(), binary | integer, integer) :: any
+  @spec write_read(GenServer.server(), iodata | integer, integer) :: any
   def write_read(server, write_data, read_count)
       when is_binary(write_data) and is_integer(read_count) do
     GenServer.call(server, {:write_read, write_data, read_count})
