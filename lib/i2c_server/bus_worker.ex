@@ -67,7 +67,7 @@ defmodule I2cServer.BusWorker do
 
   @spec write_read(GenServer.server(), bus_address, binary | integer, integer) :: any
   def write_read(server, bus_address, write_data, read_count)
-      when is_binary(write_data) and is_integer(read_count) do
+      when (is_binary(write_data) or is_list(write_data)) and is_integer(read_count) do
     GenServer.call(server, {:write_read, bus_address, write_data, read_count})
   end
 

@@ -68,7 +68,7 @@ defmodule I2cServer do
   """
   @spec write_read(GenServer.server(), iodata | integer, integer) :: any
   def write_read(server, write_data, read_count)
-      when is_binary(write_data) and is_integer(read_count) do
+      when (is_binary(write_data) or is_list(write_data)) and is_integer(read_count) do
     GenServer.call(server, {:write_read, write_data, read_count})
   end
 

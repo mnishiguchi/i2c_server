@@ -46,7 +46,8 @@ defmodule I2cServerTest do
     read_count = 23
 
     assert {:ok, _binary} = I2cServer.write_read(server, register, read_count)
-    assert {:ok, _binary} = I2cServer.write_read(server, <<register>>, read_count)
+    assert {:ok, _binary} = I2cServer.write_read(server, <<register, 0x06>>, read_count)
+    assert {:ok, _binary} = I2cServer.write_read(server, [register, 0x06], read_count)
   end
 
   test "bulk" do
