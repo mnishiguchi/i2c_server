@@ -86,7 +86,7 @@ defmodule I2cServer.BusWorker do
           | function()
         ]) :: list
   def bulk(server, bus_address, bulk_operations) when is_list(bulk_operations) do
-    GenServer.call(server, {:bulk, bus_address, bulk_operations})
+    GenServer.call(server, {:bulk, bus_address, bulk_operations}, :infinity)
   end
 
   @impl GenServer

@@ -55,4 +55,11 @@ defmodule I2cServer.BusWorkerTest do
     assert {:ok, _binary} = BusWorker.write_read(pid, bus_address, register, read_count)
     assert {:ok, _binary} = BusWorker.write_read(pid, bus_address, <<register>>, read_count)
   end
+
+  test "bulk" do
+    pid = BusWorker.whereis("i2c-1")
+    bus_address = 0x77
+
+    assert [:ok, :ok] = BusWorker.bulk(pid, bus_address, [{:sleep, 2000}, {:sleep, 3000}])
+  end
 end
