@@ -102,19 +102,19 @@ defmodule I2cServer.BusWorker do
   @impl GenServer
   def handle_call({:read, bus_address, read_count}, _from, state) do
     result = I2cServer.I2cBus.read(state.i2c_ref, bus_address, read_count)
-    {:reply, result, state}
+    {:reply, result, state, 10_000}
   end
 
   @impl GenServer
   def handle_call({:write, bus_address, data}, _from, state) do
     result = I2cServer.I2cBus.write(state.i2c_ref, bus_address, data)
-    {:reply, result, state}
+    {:reply, result, state, 10_000}
   end
 
   @impl GenServer
   def handle_call({:write_read, bus_address, register, read_count}, _from, state) do
     result = I2cServer.I2cBus.write_read(state.i2c_ref, bus_address, register, read_count)
-    {:reply, result, state}
+    {:reply, result, state, 10_000}
   end
 
   def handle_call({:bulk, bus_address, bulk_operations}, _from, state) do
@@ -126,7 +126,7 @@ defmodule I2cServer.BusWorker do
       |> Stream.map(fn f -> f.(params) end)
       |> Enum.to_list()
 
-    {:reply, result, state}
+    {:reply, result, state, 30_000}
   end
 
   defp bulk_operations_to_funs(bulk_operations) do
