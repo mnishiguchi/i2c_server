@@ -126,7 +126,7 @@ defmodule I2cServer.BusWorker do
       |> Stream.map(fn f -> f.(params) end)
       |> Enum.to_list()
 
-    {:reply, result, state}
+    {:reply, result, state, :infinity}
   end
 
   defp bulk_operations_to_funs(bulk_operations) do
